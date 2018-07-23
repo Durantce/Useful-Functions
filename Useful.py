@@ -44,3 +44,18 @@ def get_state_abb(state_name):
         else:
             
             pass
+
+        
+        
+population_response = requests.get('https://api.census.gov/data/2015/acs5?get=NAME,B01001_001E&for=county:*')
+population_json = response.json()
+population_frame = pd.DataFrame(population_json[1:],columns=population_json[0])
+population_frame['Fips'] = population_frame['state'] + population_frame['county']
+
+def get_population_by_fips(fips):
+    
+    '''
+    Takes county Fips code and returns county population 
+    '''
+    
+    return list(population_frame[population_frame['Fips'] == fips]['B01001_001E'])[0]

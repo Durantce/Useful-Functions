@@ -99,3 +99,22 @@ layout = dict(
     
 fig = dict( data=data, layout=layout )
 py.iplot( fig, filename='d3-cloropleth-map' )
+
+def CreateDates(start_date, end_date):
+    
+    '''
+    Takes in start and end dates in the form of 'yyyy-mm-dd' and returns a list of dates that fall in between those two dates in
+    the same format
+    '''
+    
+    start_datetime = datetime.date(int(start_date.split('-')[0]), int(start_date.split('-')[1]), int(start_date.split('-')[2]))
+    end_datetime = datetime.date(int(end_date.split('-')[0]), int(end_date.split('-')[1]), int(end_date.split('-')[2]))
+    
+    delt = end_datetime-start_datetime
+
+    numdays = delt.days
+
+    date_list = [start_datetime + datetime.timedelta(days=x) for x in range(0, numdays+1)]
+    dates_for_reading = [date.strftime("20%y-%m-%d") for date in date_list]
+    
+    return dates_for_reading

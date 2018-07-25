@@ -118,3 +118,33 @@ def CreateDates(start_date, end_date):
     dates_for_reading = [date.strftime("20%y-%m-%d") for date in date_list]
     
     return dates_for_reading
+
+
+ghcnd_txt_file = requests.get('https://www1.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt')
+def find_ghcnd(ghcnd_code):
+    
+    '''
+    Takes GHCND code in the form of 'USC00010823' and returns FIPS code for that county
+    '''
+    
+    
+    for line in ghcnd_txt_file.iter_lines():
+    
+        decoded = line.decode('utf-8')
+
+        if ghcnd_code in decoded:
+
+            latitude = decoded.split('  ')[1]
+            longitude = decoded.split('  ')[2]
+            
+            print(latitude, longitude)
+
+            response = requests.get('https://geo.fcc.gov/api/census/block/find?latitude={}&longitude={}&format=json'.format(latitude, longitude))
+            print(response.json())
+            fips = str(response.json()['County']['FIPS']).zfill(5)
+
+            return fips
+        
+        else:
+            
+            pass

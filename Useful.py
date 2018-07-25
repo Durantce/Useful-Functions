@@ -127,24 +127,9 @@ def find_ghcnd(ghcnd_code):
     Takes GHCND code in the form of 'USC00010823' and returns FIPS code for that county
     '''
     
+    lat_long = [(string.split()[1], string.split()[2]) for string in [line.decode('utf-8') for line in ghcnd_txt_file.iter_lines()] if string.split()[0] == ghcnd_code][0]
     
-    for line in ghcnd_txt_file.iter_lines():
+    fips_response = requests.get('https://geo.fcc.gov/api/census/block/find?latitude={}&longitude={}&format=json'.format(lat_long[0], lat_long[1]))
+    fips = str(fips_response.json()['County']['FIPS']).zfill(5)
     
-        decoded = line.decode('utf-8')
-
-        if ghcnd_code in decoded:
-
-            latitude = decoded.split('  ')[1]
-            longitude = decoded.split('  ')[2]
-            
-            print(latitude, longitude)
-
-            response = requests.get('https://geo.fcc.gov/api/census/block/find?latitude={}&longitude={}&format=json'.format(latitude, longitude))
-            print(response.json())
-            fips = str(response.json()['County']['FIPS']).zfill(5)
-
-            return fips
-        
-        else:
-            
-            pass
+    return fips
